@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: stg_transactions
+    description: >
+      Clean, de-duplicated staging view over the bronze layer. Excludes
+      natural-key duplicates. Quarantined records never reach this layer.
+    columns:
+      - name: transaction_id
+        description: Application-level unique identifier (TXN-NNNN).
+        tests: [not_null, unique]
+      - name: account_id
+        description: Account identifier (ACC-NNNN).
+        tests: [not_null]
+      - name: status
+        description: Transaction lifecycle status.
+        tests:
+          - accepted_values:
+              values: ['completed', 'pending', 'failed', 'reversed']
+      - name: transaction_type
+        tests:
+          - accepted_values:
+              values: ['debit', 'credit']
+      - name: amount
+        description: Must be strictly greater than zero.
+        tests:
+          - positive_value
+
+  - name: daily_account_summary
+    description: >
+      Daily account-level summary of COMPLETED transactions only.
+      Grain: one row per account_id + transaction_date.
+      Consumers: analysts and product managers.
+      Owner: Data Platform Team. SLA: refreshed daily by 06:00 UTC.
+    tests:
+      - unique_combination:
+          columns: ['account_id', 'transaction_date']
+    columns:
+      - name: account_id
+        description: Account identifier.
+        tests: [not_null]
+      - name: transaction_date
+        description: UTC calendar date truncated from the transaction timestamp.
+        tests: [not_null]
+      - name: total_debit_amount
+        description: Sum of debit amounts for completed transactions.
+        tests: [not_null, non_negative]
+      - name: total_credit_amount
+        description: Sum of credit amounts for completed transactions.
+        tests: [not_null, non_negative]
+      - name: net_amount
+        description: total_credit_amount minus total_debit_amount.
+        tests: [not_null]
+      - name: transaction_count
+        description: Count of completed transactions that day.
+        tests: [not_null, positive_value]
+      - name: distinct_merchants
+        description: Distinct merchant_name values that day.
+        tests: [not_null, positive_value]
+      - name: top_category
+        description: Merchant category with the highest total spend that day.
+        tests:
+          - accepted_values:
+              values: ['e-commerce', 'travel', 'food_and_beverage', 'groceries',
+                       'electronics', 'retail', 'entertainment', 'health',
+                       'transportation', 'home_and_garden', 'payroll', 'transfer']
+      - name: currencies
+        description: Comma-separated distinct currencies used that day.
+        tests: [not_null]
+      - name: updated_at
+        description: UTC timestamp when the row was last computed.
+        tests: [not_null]
+
+data_tests:
+  - name: net_amount_is_consistent
+    description: net_amount must always equal credit minus debit.
+    sql: |
+      SELECT account_id, transaction_date, net_amount,
+             total_credit_amount, total_debit_amount
+      FROM daily_account_summary
+      WHERE ABS(net_amount - (total_credit_amount - total_debit_amount)) > 0.005
+
+  - name: summary_totals_match_source
+    description: >
+      Reconciliation: the mart's transaction_count must equal the number of
+      completed, non-duplicate transactions in staging.
+    sql: |
+      WITH expected AS (
+          SELECT COUNT(*) AS n FROM stg_transactions WHERE status = 'completed'
+      ), actual AS (
+          SELECT COALESCE(SUM(transaction_count), 0) AS n FROM daily_account_summary
+      )
+      SELECT e.n AS expected_rows, a.n AS actual_rows
+      FROM expected e CROSS JOIN actual a
+      WHERE e.n <> a.n

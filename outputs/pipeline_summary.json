@@ -1,0 +1,21 @@
+{
+  "raw_transactions": 349,
+  "raw_flagged_duplicate": 5,
+  "quarantined": 3,
+  "daily_account_summary_rows": 238,
+  "distinct_accounts": 20,
+  "quarantine_reasons": [
+    {
+      "error_reason": "transaction_date: invalid_iso8601_utc_format (got '2024-04-15 09:30:00'); amount: not_strictly_positive (got '-127.5'); status: invalid_status (got 'Completed'); merchant_name: empty_or_whitespace_only (got '   ')",
+      "record_count": 1
+    },
+    {
+      "error_reason": "transaction_date: not_a_real_calendar_date (got '2024-11-31T14:22:00Z'); merchant_category: invalid_merchant_category (got 'fast_food'); country_code: not_an_assigned_iso3166_code (got 'UK')",
+      "record_count": 1
+    },
+    {
+      "error_reason": "amount: not_strictly_positive (got '0.0'); transaction_type: invalid_transaction_type (got 'Credit'); merchant_category: invalid_merchant_category (got 'Finance'); country_code: not_an_assigned_iso3166_code (got 'EN')",
+      "record_count": 1
+    }
+  ]
+}

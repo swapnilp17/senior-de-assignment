@@ -1,0 +1,32 @@
+{
+  "watermark_store": {
+    "source_name": "supabase.transactions",
+    "watermark_value": "2024-03-30 21:01:36",
+    "effective_request_from": null,
+    "last_run_id": "20261001T054552-9db7cb",
+    "last_run_at": "2026-10-01 05:46:01.238141",
+    "last_run_status": "success",
+    "records_ingested": 349
+  },
+  "last_run": {
+    "run_id": "20261001T054552-9db7cb",
+    "source_name": "supabase.transactions",
+    "run_mode": "full",
+    "requested_from": null,
+    "started_at": "2026-10-01 05:45:52.831312",
+    "ended_at": "2026-10-01 05:46:01.238141",
+    "status": "success",
+    "records_fetched": 352,
+    "records_valid": 349,
+    "records_quarantined": 3,
+    "records_duplicate_flagged": 5,
+    "previous_watermark": null,
+    "new_watermark": "2024-03-30 21:01:36",
+    "error_message": null
+  },
+  "table_counts": {
+    "raw_transactions": 349,
+    "raw_transactions_flagged_duplicate": 5,
+    "quarantine_transactions": 3
+  }
+}

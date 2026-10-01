@@ -1,0 +1,11 @@
+transaction_id,is_duplicate,duplicate_of_transaction_id,account_id,transaction_date,amount,currency,merchant_name,merchant_category,status,country_code
+TXN-0178,false,,ACC-1020,2024-03-04 16:44:23,345.74,EUR,IKEA,retail,completed,GB
+TXN-0350,true,TXN-0178,ACC-1020,2024-03-04 16:44:23,345.74,EUR,IKEA,retail,completed,GB
+TXN-0079,false,,ACC-1003,2024-02-20 10:44:01,43.05,USD,Sony Electronics,electronics,completed,US
+TXN-0352,true,TXN-0079,ACC-1003,2024-02-20 10:44:01,43.05,USD,Sony Electronics,electronics,completed,US
+TXN-0194,false,,ACC-1009,2024-02-19 21:50:15,1481.14,EUR,Shell Gas,transportation,completed,US
+TXN-0348,true,TXN-0194,ACC-1009,2024-02-19 21:50:15,1481.14,EUR,Shell Gas,transportation,completed,US
+TXN-0319,false,,ACC-1003,2024-03-04 21:17:09,593.75,GBP,Spotify,entertainment,failed,US
+TXN-0349,true,TXN-0319,ACC-1003,2024-03-04 21:17:09,593.75,GBP,Spotify,entertainment,failed,US
+TXN-0180,false,,ACC-1011,2024-03-17 14:55:04,28.47,USD,Sony Electronics,electronics,completed,US
+TXN-0351,true,TXN-0180,ACC-1011,2024-03-17 14:55:04,28.47,USD,Sony Electronics,electronics,completed,US
