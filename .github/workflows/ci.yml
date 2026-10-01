@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit and integration tests
+        run: pytest -q
+        env:
+          # Tests mock all HTTP; dummy values satisfy the config loader.
+          ASSESSMENT_API_BASE_URL: https://example.test/rest/v1
+          ASSESSMENT_API_KEY: ci-dummy-key
+          ASSESSMENT_AUTH_TOKEN: ci-dummy-token
+          DUCKDB_PATH: /tmp/ci.duckdb
+
+      - name: Verify no secrets are committed
+        run: |
+          if git ls-files | grep -qE '^\.env$'; then
+            echo "ERROR: .env is tracked by git"; exit 1
+          fi
+          if git grep -qi "sb_publishable" -- ':(exclude).env.example'; then
+            echo "ERROR: credential pattern found in tracked files"; exit 1
+          fi
+          echo "No secrets detected."
