@@ -1,8 +1,7 @@
 ![CI](https://github.com/swapnilp17/senior-de-assignment/actions/workflows/ci.yml/badge.svg)
 # Senior Data Engineer Take-Home — Payment Transactions Pipeline
 
-If you have `make` available, `make all` runs the entire pipeline end to end.
-Otherwise run the commands below directly.
+
 
 
 A production-minded ingestion and transformation pipeline that fetches payment

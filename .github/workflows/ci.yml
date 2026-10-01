@@ -40,7 +40,11 @@ jobs:
           if git ls-files | grep -qE '^\.env$'; then
             echo "ERROR: .env is tracked by git"; exit 1
           fi
-          if git grep -qi "sb_publishable" -- ':(exclude).env.example'; then
-            echo "ERROR: credential pattern found in tracked files"; exit 1
+          # Pattern is split so this workflow file does not match itself.
+          PATTERN="sb_""publishable"
+          if git grep -qi "$PATTERN" -- ':(exclude).env.example' ':(exclude).github'; then
+            echo "ERROR: credential pattern found in tracked files"
+            git grep -i "$PATTERN" -- ':(exclude).env.example' ':(exclude).github'
+            exit 1
           fi
           echo "No secrets detected."
